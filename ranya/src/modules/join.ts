@@ -1,8 +1,12 @@
 import { Extension, applicationCommand } from '@pikokr/command.ts'
-import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js'
+import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember } from 'discord.js'
 import ollama from 'ollama'
-import { config } from '../config'
 import { lang } from '../lang'
+import {
+  joinVoiceChannel,
+  VoiceConnectionStatus,
+  entersState,
+} from '@discordjs/voice'
 
 class JoinExtension extends Extension {
   @applicationCommand({
@@ -11,19 +15,27 @@ class JoinExtension extends Extension {
     description: lang.join_description,
   })
   async join(i: ChatInputCommandInteraction) {
-    const response = await ollama.chat({
-      model: 'exaone3.5:7.8b',
-      messages: [
-    {
-      role: 'system',
-      content: config.system_prompt
-    },
-    {
-      role: 'user',
-      content: '안녕!'
+    await i.deferReply()
+    const member = i.member as GuildMember;
+    const voiceChannel = member.voice.channel
+    if (!voiceChannel) {
+      await i.editReply(lang.no_join)
+      return
     }
-  ]
+
+    const connection = joinVoiceChannel({
+      channelId: voiceChannel.id,
+      guildId: voiceChannel.guild.id,
+      adapterCreator: voiceChannel.guild.voiceAdapterCreator,
     })
+
+    try {
+      await entersState(connection, VoiceConnectionStatus.Ready, 30_000)
+      await i.editReply(lang.join_msg)
+    } catch (error) {
+      connection.destroy()
+      await i.editReply(lang.join_failed)
+    }
   }
 }
 

@@ -1,17 +1,17 @@
 import { Extension, applicationCommand } from '@pikokr/command.ts'
 import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js'
-
-class JoinExtension extends Extension {
+import { lang } from '../lang'
+class PingExtension extends Extension {
   @applicationCommand({
-    name: '핑',
+    name: lang.ping,
     type: ApplicationCommandType.ChatInput,
-    description: '현재 핑을 확인해요!',
+    description: lang.ping_description,
   })
   async ping(i: ChatInputCommandInteraction) {
-    await i.reply(`현재 핑: ${i.client.ws.ping}ms`)
+    await i.reply(lang.ping_msg.replace('{ping}', `${this.client.ws.ping}`))
   }
 }
 
 export const setup = async () => {
-  return new JoinExtension()
+  return new PingExtension()
 }

@@ -1,6 +1,10 @@
 {
     "ping": "핑",
-    "ping_description": "현재 핑을 확인해요!",
+    "ping_description": "... 내 지연시간을 확인 할 수 있어.",
+    "ping_msg": "... 현재 핑: {ping}ms",
     "join": "들어와",
-    "join_description": "라냐를 음성 채널에 들어오게 해요!"
+    "join_description": "... 음성 채널에 들어가 줄게.",
+    "no_join": "... 음성 채널에 안 들어가 있잖아.",
+    "join_msg": "... 음성 채널에 들어왔어.",
+    "join_failed": "... 음성 채널에 못 들어갔어."
 }
