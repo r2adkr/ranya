@@ -1,5 +1,4 @@
 import { Extension, listener } from '@pikokr/command.ts'
-import { EndBehaviorType } from '@discordjs/voice'
 
 class EventExtension extends Extension {
   @listener({ event: 'clientReady' })
@@ -7,7 +6,7 @@ class EventExtension extends Extension {
     this.logger.info(`Logged in as ${this.client.user?.tag}`)
     await this.commandClient.fetchOwners()
   }
-
+  
   @listener({ event: 'applicationCommandInvokeError', emitter: 'cts' })
   async errorHandler(err: Error) {
     this.logger.error(err)

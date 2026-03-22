@@ -22,6 +22,15 @@ class JoinExtension extends Extension {
     if (!voiceChannel) {
       await i.editReply(lang.no_join)
       return
+    } else if (!voiceChannel.joinable) {
+      await i.editReply(lang.join_failed)
+      return
+    } else if (voiceChannel.full) {
+      await i.editReply(lang.full)
+      return
+    } else if (voiceChannel.guild.members.me?.voice.channelId) {
+      await i.editReply(lang.already_joined)
+      return
     }
 
     const connection = joinVoiceChannel({
@@ -39,6 +48,32 @@ class JoinExtension extends Extension {
       connection.destroy()
       await i.editReply(lang.join_failed)
     }
+    connection.receiver.speaking.on('start', async (userId) => {
+      if (userId === this.client.user?.id) return // 봇 자신이 말하는 경우 무시
+      const user = await this.client.users.fetch(userId)
+    })
+  }
+  @applicationCommand({
+    name: lang.leave,
+    type: ApplicationCommandType.ChatInput,
+    description: lang.leave_description,
+  })
+  async leave(i: ChatInputCommandInteraction) {
+      await i.deferReply()
+      const member = i.member as GuildMember;
+      const voiceChannel = member.voice.channel
+      if (!voiceChannel) {
+        await i.editReply(lang.no_join)
+        return
+      }
+      const connection = joinVoiceChannel({
+        channelId: voiceChannel.id,
+        guildId: voiceChannel.guild.id,
+        adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+        selfDeaf: false,
+      })
+      connection.destroy()
+      await i.editReply(lang.leave_msg)
   }
 }
 
