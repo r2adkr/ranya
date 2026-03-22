@@ -1,6 +1,6 @@
 import { Extension, applicationCommand } from '@pikokr/command.ts'
 import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js'
-import { lang } from '../lang'
+import { lang } from '../types/lang'
 class PingExtension extends Extension {
   @applicationCommand({
     name: lang.ping,

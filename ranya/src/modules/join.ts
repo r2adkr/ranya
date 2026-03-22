@@ -1,7 +1,7 @@
 import { Extension, applicationCommand } from '@pikokr/command.ts'
 import { ApplicationCommandType, ChatInputCommandInteraction, GuildMember } from 'discord.js'
 import ollama from 'ollama'
-import { lang } from '../lang'
+import { lang } from '../types/lang'
 import {
   joinVoiceChannel,
   VoiceConnectionStatus,
@@ -33,6 +33,7 @@ class JoinExtension extends Extension {
       await entersState(connection, VoiceConnectionStatus.Ready, 30_000)
       await i.editReply(lang.join_msg)
     } catch (error) {
+      console.log(error)
       connection.destroy()
       await i.editReply(lang.join_failed)
     }
