@@ -1,4 +1,5 @@
 import { Extension, listener } from '@pikokr/command.ts'
+import { EndBehaviorType } from '@discordjs/voice'
 
 class EventExtension extends Extension {
   @listener({ event: 'clientReady' })

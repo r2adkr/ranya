@@ -28,6 +28,7 @@ class JoinExtension extends Extension {
       channelId: voiceChannel.id,
       guildId: voiceChannel.guild.id,
       adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+      selfDeaf: false,
     })
 
     try {
