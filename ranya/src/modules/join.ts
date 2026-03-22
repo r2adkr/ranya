@@ -7,6 +7,7 @@ import {
   VoiceConnectionStatus,
   entersState,
 } from '@discordjs/voice'
+import { logger } from '../utils/logger'
 
 class JoinExtension extends Extension {
   @applicationCommand({
@@ -33,7 +34,7 @@ class JoinExtension extends Extension {
       await entersState(connection, VoiceConnectionStatus.Ready, 30_000)
       await i.editReply(lang.join_msg)
     } catch (error) {
-      console.log(error)
+      logger.error(error)
       connection.destroy()
       await i.editReply(lang.join_failed)
     }

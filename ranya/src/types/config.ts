@@ -6,4 +6,4 @@ type Config = {
 } 
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-export const config: Config = require('../config.json')
+export const config: Config = require('../../config.json')
