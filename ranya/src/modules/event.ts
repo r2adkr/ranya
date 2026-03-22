@@ -1,7 +1,7 @@
 import { Extension, listener } from '@pikokr/command.ts'
 
 class EventExtension extends Extension {
-  @listener({ event: 'ready' })
+  @listener({ event: 'clientReady' })
   async ready() {
     this.logger.info(`Logged in as ${this.client.user?.tag}`)
     await this.commandClient.fetchOwners()
