@@ -1,4 +1,5 @@
 {
   "token": "",
+  "ai_docker_port": "your_docker_port",
   "guilds": [] 
 }
