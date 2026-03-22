@@ -1,5 +1,6 @@
 {
   "token": "",
   "ai_docker_port": "your_docker_port",
-  "guilds": [] 
+  "guilds": [],
+  "system_prompt": "your_system_prompt"
 }

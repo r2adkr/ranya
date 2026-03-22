@@ -1,14 +1,29 @@
 import { Extension, applicationCommand } from '@pikokr/command.ts'
 import { ApplicationCommandType, ChatInputCommandInteraction } from 'discord.js'
+import ollama from 'ollama'
+import { config } from '../config'
+import { lang } from '../lang'
 
 class JoinExtension extends Extension {
   @applicationCommand({
-    name: 'ping',
+    name: lang.join,
     type: ApplicationCommandType.ChatInput,
-    description: 'wow this is ping',
+    description: lang.join_description,
   })
-  async ping(i: ChatInputCommandInteraction) {
-    await i.reply(`current ping: ${i.client.ws.ping}ms`)
+  async join(i: ChatInputCommandInteraction) {
+    const response = await ollama.chat({
+      model: 'exaone3.5:7.8b',
+      messages: [
+    {
+      role: 'system',
+      content: config.system_prompt
+    },
+    {
+      role: 'user',
+      content: '안녕!'
+    }
+  ]
+    })
   }
 }
 
