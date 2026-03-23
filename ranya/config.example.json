@@ -1,7 +1,8 @@
 {
-  "token": "",
-  "ai_docker_port": "your_docker_port",
+  "token": "YOUR_BOT_TOKEN",
   "guilds": [],
-  "bot_name": "your_bot_name",
-  "system_prompt": "your_system_prompt"
+  "ai_docker_port": 11434,
+  "system_prompt": "...",
+  "whisper_host": "http://whisper:8001",
+  "orpheus_host": "http://orpheus:8002"
 }

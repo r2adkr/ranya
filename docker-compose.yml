@@ -14,3 +14,93 @@ services:
     volumes:
       - ./ollama_data:/root/.ollama
     restart: unless-stopped
+
+  whisper:
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile
+    container_name: whisper
+    ports:
+      - "8001:8001"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - ./whisper/models:/root/.cache/huggingface
+    restart: unless-stopped
+
+  orpheus-model-init:
+    image: alpine:latest
+    container_name: orpheus-model-init
+    volumes:
+      - orpheus_models:/models
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache wget &&
+        if [ ! -f /models/Orpheus-3b-Korean-FT-Q8_0.gguf ]; then
+          wget -O /models/Orpheus-3b-Korean-FT-Q8_0.gguf \
+            https://huggingface.co/lex-au/Orpheus-3b-Korean-FT-Q8_0.gguf/resolve/main/Orpheus-3b-Korean-FT-Q8_0.gguf
+        fi
+
+  llama-cpp-server:
+    image: ghcr.io/ggml-org/llama.cpp:server-cuda
+    container_name: llama-cpp-server
+    depends_on:
+      orpheus-model-init:
+        condition: service_completed_successfully
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    volumes:
+      - orpheus_models:/models
+    command: >
+      -m /models/Orpheus-3b-Korean-FT-Q8_0.gguf
+      --host 0.0.0.0
+      --port 5006
+      --ctx-size 8192
+      --n-predict 8192
+      --rope-scaling linear
+      -ngl 99
+    restart: unless-stopped
+
+  orpheus:
+    build:
+      context: ./orpheus
+      dockerfile: Dockerfile
+    container_name: orpheus
+    ports:
+      - "8002:5005"
+    depends_on:
+      - llama-cpp-server
+    environment:
+      - ORPHEUS_API_URL=http://llama-cpp-server:5006/v1/completions
+      - ORPHEUS_MODEL_NAME=Orpheus-3b-Korean-FT-Q8_0.gguf
+    volumes:
+      - ./orpheus/models:/root/.cache/huggingface
+    restart: unless-stopped
+
+  ranya:
+    build:
+      context: ./ranya        # ← 수정
+      dockerfile: Dockerfile
+    container_name: ranya
+    depends_on:
+      - ollama
+      - whisper
+      - orpheus
+    volumes:
+      - ./ranya/config.json:/app/config.json  # ← 수정
+    restart: unless-stopped
+
+volumes:
+  orpheus_models:
